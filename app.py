@@ -116,29 +116,33 @@ with col3:
         "orange3"
     ), unsafe_allow_html=True)
 
-# Overview Table
-st.header("📋 Protocol Overview")
-overview_cols = [col for col in ['Protocol', 'Category', 'TVL (USD)'] if col in filtered_tvl.columns]
-if 'Market Cap (USD)' in filtered_market.columns:
-    overview_cols.append('Market Cap (USD)')
-if 'Current Price (USD)' in filtered_market.columns:
-    overview_cols.append('Current Price (USD)')
-
+# Merge TVL and market data (left join: all protocols from TVL)
 overview_df = pd.merge(filtered_tvl, filtered_market, on='Protocol', how='left')
 
-# Format TVL (USD) column with $ sign
+# Protocol Overview Table
+st.header("📋 Protocol Overview")
+overview_cols = [col for col in ['Protocol', 'Category', 'TVL (USD)'] if col in overview_df.columns]
+if 'Market Cap (USD)' in overview_df.columns:
+    overview_cols.append('Market Cap (USD)')
+if 'Current Price (USD)' in overview_df.columns:
+    overview_cols.append('Current Price (USD)')
+
 format_dict = {}
 if 'TVL (USD)' in overview_cols:
     format_dict['TVL (USD)'] = lambda x: format_currency(x)
+if 'Market Cap (USD)' in overview_cols:
+    format_dict['Market Cap (USD)'] = lambda x: format_currency(x)
+if 'Current Price (USD)' in overview_cols:
+    format_dict['Current Price (USD)'] = lambda x: format_currency(x)
 
 st.dataframe(
     overview_df[overview_cols].reset_index(drop=True).style.format(format_dict),
     use_container_width=True
 )
 
-# Top Protocols by TVL
+# Top Protocols by TVL (use overview_df to ensure all protocols are included)
 st.subheader("🏆 Top Protocols by TVL")
-top_tvl = filtered_tvl.nlargest(10, 'TVL (USD)')
+top_tvl = overview_df.nlargest(10, 'TVL (USD)')
 fig = px.bar(top_tvl, x='Protocol', y='TVL (USD)', color='Category', title="Top Protocols by TVL")
 fig.update_layout(xaxis_tickangle=45, showlegend=True)
 st.plotly_chart(fig, use_container_width=True)
