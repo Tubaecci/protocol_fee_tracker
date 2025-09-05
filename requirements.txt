@@ -1,0 +1,5 @@
+requests           # For making HTTP requests to APIs
+pandas             # For data manipulation and analysis
+numpy              # For numerical operations
+python-dotenv      # For managing environment variables (API keys, configs)
+matplotlib         # For data visualization (optional)
