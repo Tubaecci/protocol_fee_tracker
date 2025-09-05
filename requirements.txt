@@ -4,3 +4,4 @@ numpy              # For numerical operations
 python-dotenv      # For managing environment variables (API keys, configs)
 matplotlib         # For data visualization (optional)
 plotly
+joblib
